@@ -3,6 +3,7 @@ package com.es.phoneshop.model.product;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.util.ProductComparator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +65,8 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public void save(Product product) {
         Lock lock = readWriteLock.writeLock();
+        List<PriceHistory> priceHistory = new ArrayList<>();
+        LocalDate localDate = LocalDate.now();
         lock.lock();
         try {
             if (product.getId() == null) {
@@ -71,9 +74,15 @@ public class ArrayListProductDao implements ProductDao {
                 product.setId(maxId);
                 products.add(product);
             } else {
-                int index = products.indexOf(product);
-                products.set(index, product);
+                if(products.contains(product)){
+                    int currentProduct = products.indexOf(product);
+                    products.set(currentProduct, product);
+                }else{
+                    products.add(product);
+                }
             }
+            priceHistory = product.getPriceHistory();
+            product.setPriceHistory(priceHistory);
         } finally {
             lock.unlock();
         }
