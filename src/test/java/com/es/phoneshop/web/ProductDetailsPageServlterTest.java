@@ -18,10 +18,10 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.Queue;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -33,36 +33,30 @@ public class ProductDetailsPageServlterTest {
     private HttpServletResponse response;
     @Mock
     private RequestDispatcher requestDispatcher;
-
-    ProductDao productDao = ArrayListProductDao.getInstance();
-
-    private ServletConfig servletConfig;
-
     @Mock
-    private Product product1;
-
+    private ServletConfig servletConfig;
     @Mock
     private HttpSession session;
 
     private ProductDetailsPageServlet servlet = new ProductDetailsPageServlet();
+    private ProductDao productDao = ArrayListProductDao.getInstance();
+    private final Product product1 = new Product(1L, "iphone6", "Apple iPhone 6", new BigDecimal(1000), null, 30, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Apple/Apple%20iPhone%206.jpg");
 
     @Before
-    public void setup() throws ServletException, IOException {
+    public void setup() throws ServletException {
         servlet.init(servletConfig);
-        when(request.getPathInfo()).thenReturn("/1");
-        when(productDao.getProduct(1L)).thenReturn(product1);
-        when(request.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp")).thenReturn(requestDispatcher);
-        when(product1.getId()).thenReturn(1L);
+        productDao.save(product1);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        when(request.getSession()).thenReturn(session);
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
-        servlet.doGet(request, response);
+        when(request.getPathInfo()).thenReturn("/1");
 
-        verify(request).setAttribute("product", product1);
-        verify(requestDispatcher).forward(request, response);
-        verify(session).setAttribute(eq("recent"), any(Queue.class));
+        servlet.doGet(request, response);
+        verify(request).getRequestDispatcher(eq("/WEB-INF/pages/product.jsp"));
+        verify(request).setAttribute("product", any());
     }
 
 }

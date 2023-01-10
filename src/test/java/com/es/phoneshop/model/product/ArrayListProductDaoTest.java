@@ -10,7 +10,10 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ArrayListProductDaoTest
 {
@@ -23,7 +26,7 @@ public class ArrayListProductDaoTest
 
     @Test
     public void testFindProductsNoResults() {
-        assertFalse(productDao.findProducts("a", SortField.description, SortOrder.asc).isEmpty());
+        assertTrue(productDao.findProducts("a", SortField.description, SortOrder.asc).isEmpty());
     }
 
     @Test
@@ -51,5 +54,19 @@ public class ArrayListProductDaoTest
         productDao.save(product2);
 
         assertEquals(1L, product2.getId() - product1.getId());
+    }
+
+    @Test
+    public void testDeleteProduct(){
+        Product testProduct = new Product();
+        List<Product> allProducts;
+
+        productDao.save(testProduct);
+        assertTrue(testProduct.getId()>=0);
+
+        productDao.delete(testProduct.getId());
+        allProducts = productDao.findProducts("", SortField.description, SortOrder.asc);
+
+        assertFalse(allProducts.contains(testProduct));
     }
 }
