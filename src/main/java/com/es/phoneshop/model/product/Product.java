@@ -40,6 +40,21 @@ public class Product {
         this.priceHistory = priceHistory;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+
+        Product product = (Product) o;
+
+        return getId() != null ? getId().equals(product.getId()) : product.getId() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : 0;
+    }
+
     public Long getId() {
         return id;
     }

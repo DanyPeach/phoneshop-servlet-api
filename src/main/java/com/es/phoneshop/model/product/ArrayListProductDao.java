@@ -3,7 +3,6 @@ package com.es.phoneshop.model.product;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.util.ProductComparator;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,11 +13,13 @@ import java.util.stream.Collectors;
 
 public class ArrayListProductDao implements ProductDao {
 
-    private static ProductDao instance;
-
     private List<Product> products;
     private long maxId;
     ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+
+    private static class SingeltonHelper{
+        private static final ArrayListProductDao INSTANCE = new ArrayListProductDao();
+    }
 
     private ArrayListProductDao() {
         this.products = new ArrayList<>();
@@ -65,8 +66,7 @@ public class ArrayListProductDao implements ProductDao {
     @Override
     public void save(Product product) {
         Lock lock = readWriteLock.writeLock();
-        List<PriceHistory> priceHistory = new ArrayList<>();
-        LocalDate localDate = LocalDate.now();
+        List<PriceHistory> priceHistory;
         lock.lock();
         try {
             if (product.getId() == null) {
@@ -100,10 +100,7 @@ public class ArrayListProductDao implements ProductDao {
     }
 
     public static synchronized ProductDao getInstance() {
-        if (instance == null) {
-            instance = new ArrayListProductDao();
-        }
-        return instance;
+       return SingeltonHelper.INSTANCE;
     }
 
 }
