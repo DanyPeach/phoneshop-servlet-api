@@ -1,6 +1,5 @@
 package com.es.phoneshop.model.cart;
 
-import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.product.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class DefaultCartServiceTest {
     }
 
     @Test
-    public void testFindProductsNoResults() throws OutOfStockException {
+    public void testFindProductsNoResults() {
         Product product = new Product();
         CartItem cartItem = new CartItem(product, 1);
         productDao.save(product);

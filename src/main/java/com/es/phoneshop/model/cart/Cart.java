@@ -1,29 +1,20 @@
 package com.es.phoneshop.model.cart;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Cart {
-    private Set<CartItem> cartItems;
+    private List<CartItem> cartItems;
 
     public Cart() {
-        cartItems = new HashSet<>();
+        cartItems = new ArrayList<>();
     }
 
-    public Cart(Set<CartItem> cartItems) {
+    public Cart(List<CartItem> cartItems) {
         this.cartItems = cartItems;
     }
 
-    public Set<CartItem> getCartItems() {
+    public List<CartItem> getCartItems() {
         return cartItems;
-    }
-
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "cartItems=" + cartItems +
-                '}';
     }
 }

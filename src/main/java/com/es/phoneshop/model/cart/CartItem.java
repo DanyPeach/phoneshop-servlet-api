@@ -28,28 +28,4 @@ public class CartItem {
         result = 31 * result + quantity;
         return result;
     }
-
-    @Override
-    public String toString() {
-        return "CartItem{" +
-                "product=" + product.getCode() +
-                ", quantity=" + quantity +
-                '}';
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }
