@@ -5,11 +5,11 @@ import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public class DefaultCartService implements CartService {
-
-    private Cart cart = new Cart();
+    private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
     private ProductDao productDao;
 
     private DefaultCartService() {
@@ -25,29 +25,32 @@ public class DefaultCartService implements CartService {
     }
 
     @Override
-    public Cart getCart() {
+    public synchronized Cart getCart(HttpServletRequest request) {
+        Cart cart = (Cart) request.getSession().getAttribute(CART_SESSION_ATTRIBUTE);
+        if (cart == null) {
+            cart = new Cart();
+            request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, cart);
+        }
         return cart;
     }
 
     @Override
-    public void add(long productId, int quantity) throws OutOfStockException {
+    public void add(Cart cart, long productId, int quantity) throws OutOfStockException {
         Product product = productDao.getProduct(productId);
         Optional<CartItem> optionalCartItem = getCartItemFromCart(productId, cart);
         if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
-            if (!checkFullStock(product, quantity)) {
+            if (!checkFullStock(cart, product, quantity)) {
                 throw new OutOfStockException(product, quantity, product.getStock());
             } else {
-                if (cart.getCartItems().contains(cartItem)) {
-                    cartItem.setQuantity(cartItem.getQuantity() + quantity);
-                }
+                cartItem.setQuantity(cartItem.getQuantity() + quantity);
             }
-        } else{
+        } else {
             cart.getCartItems().add(new CartItem(product, quantity));
         }
     }
 
-    private boolean checkFullStock(Product product, int quantity){
+    private boolean checkFullStock(Cart cart, Product product, int quantity) {
         int productQuantity = product.getStock();
         int inCartProductQuantity = 0;
         Optional<CartItem> optionalCartItem = getCartItemFromCart(product.getId(), cart);
