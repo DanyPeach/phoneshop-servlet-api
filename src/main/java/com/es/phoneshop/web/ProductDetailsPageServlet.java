@@ -6,6 +6,8 @@ import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;
+import com.es.phoneshop.model.viewedProduct.ViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,16 +21,19 @@ import java.text.ParseException;
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
     private CartService cartService;
+    private ViewedProductsService viewedProductService;
 
     @Override
     public void init(ServletConfig servletConfig) throws ServletException {
         super.init(servletConfig);
         productDao = ArrayListProductDao.getInstance();
         cartService = DefaultCartService.getInstance();
+        viewedProductService = ViewedProductServiceImpl.getInstance();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        viewedProductService.addProductToViewedList(req, productDao.getProduct(parseProductId(req)));
         req.setAttribute("product", productDao.getProduct(parseProductId(req)));
         req.setAttribute("cart", cartService.getCart(req));
         req.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(req, resp);
