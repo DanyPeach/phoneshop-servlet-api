@@ -5,6 +5,7 @@ import com.es.phoneshop.model.product.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
@@ -22,9 +23,10 @@ public class DefaultCartServiceTest {
     @Test
     public void testFindProductsNoResults() throws OutOfStockException {
         Product product = new Product();
+        HttpServletRequest request = null;
         CartItem cartItem = new CartItem(product, 1);
         productDao.save(product);
-        cartService.add(product.getId(), 1);
-        assertTrue(cartService.getCart().getCartItems().contains(cartItem));
+        cartService.add(cartService.getCart(request), product.getId(), 1);
+        assertTrue(cartService.getCart(request).getCartItems().contains(cartItem));
     }
 }

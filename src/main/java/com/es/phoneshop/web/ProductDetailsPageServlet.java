@@ -1,6 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.exception.OutOfStockException;
+import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
@@ -27,7 +30,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("product", productDao.getProduct(parseProductId(req)));
-        req.setAttribute("cart", cartService.getCart());
+        req.setAttribute("cart", cartService.getCart(req));
         req.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(req, resp);
     }
 
@@ -35,17 +38,19 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String quantityString = req.getParameter("quantity");
         Long id = parseProductId(req);
-
+        Cart cart = cartService.getCart(req);
         int quantity;
         try {
-          quantity = Integer.parseInt(quantityString);
-        } catch (NumberFormatException e){
+            req.getLocale();
+            NumberFormat format = NumberFormat.getInstance(req.getLocale());
+            quantity = format.parse(quantityString).intValue();
+        } catch (ParseException e) {
             req.setAttribute("error", "Not a number");
             doGet(req, resp);
             return;
         }
         try {
-            cartService.add(id, quantity);
+            cartService.add(cart, id, quantity);
         } catch (OutOfStockException e) {
             req.setAttribute("error", "Out of stock, max available: " + e.getStockAvailable());
             doGet(req, resp);
@@ -54,7 +59,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/products/" + id + "?message=Product added to your cart successfully");
     }
 
-    private Long parseProductId(HttpServletRequest request){
+    private Long parseProductId(HttpServletRequest request) {
         String productId = request.getPathInfo().substring(1);
         return Long.valueOf(productId);
     }
