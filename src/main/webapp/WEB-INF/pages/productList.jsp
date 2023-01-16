@@ -41,4 +41,15 @@
       </tr>
     </c:forEach>
   </table>
+
+  <c:if test="${not empty viewedProducts}">
+    <div class="viewed-items" style="display: flex; flex-direction: row">
+      <c:forEach var="product" items="${viewedProducts}">
+        <div class="viewed-item" style="padding: 40px 50px">
+          <img class="product-tile" src="${product.imageUrl}">
+          <p><a href="${pageContext.request.contextPath}/products/${product.id}">${product.description}</a></p>
+        </div>
+      </c:forEach>
+    </div>
+  </c:if>
 </tags:master>
