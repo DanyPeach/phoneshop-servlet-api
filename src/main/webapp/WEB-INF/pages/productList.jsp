@@ -8,24 +8,48 @@
   <p>
     Welcome to Expert-Soft training!
   </p>
+  <form>
+    <input name="query" value="${param.query}">
+    <button>Search</button>
+  </form>
   <table>
     <thead>
       <tr>
         <td>Image</td>
-        <td>Description</td>
-        <td class="price">Price</td>
+        <td>Description
+       <tags:sortLink sort="description" order="asc"></tags:sortLink>
+       <tags:sortLink sort="description" order="desc"></tags:sortLink>
+        </td>
+        <td class="price">Price
+            <tags:sortLink sort="price" order="asc"></tags:sortLink>
+            <tags:sortLink sort="price" order="desc"></tags:sortLink>
       </tr>
     </thead>
     <c:forEach var="product" items="${products}">
       <tr>
         <td>
-          <img class="product-tile" src="https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/${product.imageUrl}">
+          <img class="product-tile" src=${product.imageUrl}>
         </td>
-        <td>${product.description}</td>
+        <td>
+          <a href="${pageContext.servletContext.contextPath}/products/${product.id}">
+            ${product.description}</a></td>
         <td class="price">
+          <a href="${pageContext.servletContext.contextPath}/priceHistory/${product.id}">
           <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="${product.currency.symbol}"/>
+          </a>
         </td>
       </tr>
     </c:forEach>
   </table>
+
+  <c:if test="${not empty viewedProducts}">
+    <div class="viewed-items" style="display: flex; flex-direction: row">
+      <c:forEach var="product" items="${viewedProducts}">
+        <div class="viewed-item" style="padding: 40px 50px">
+          <img class="product-tile" src="${product.imageUrl}">
+          <p><a href="${pageContext.request.contextPath}/products/${product.id}">${product.description}</a></p>
+        </div>
+      </c:forEach>
+    </div>
+  </c:if>
 </tags:master>
