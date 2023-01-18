@@ -28,12 +28,12 @@ public class ProductListPageServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String query = request.getParameter("query");
         String sortField = request.getParameter("sort");
         String sortOrder = request.getParameter("order");
 
-        request.setAttribute("viewedProducts", viewedProductsService.getViewedProducts(request));
+        request.setAttribute("viewedProducts", viewedProductsService.getViewedProducts(request.getSession()));
         request.setAttribute("products", productDao.findProducts(query,
                 Optional.ofNullable(sortField).map(SortField::valueOf).orElse(null),
                 Optional.ofNullable(sortOrder).map(SortOrder::valueOf).orElse(null)));

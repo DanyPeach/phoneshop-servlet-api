@@ -1,10 +1,14 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;
 import com.es.phoneshop.model.viewedProduct.ViewedProductsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -14,41 +18,51 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.any;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Currency;
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductListPageServletTest {
+public class ProductPriceHistoryServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
+    private HttpSession session;
+    @Mock
     private RequestDispatcher requestDispatcher;
     @Mock
-    private HttpSession session;
+    private ArrayListProductDao arrayListProductDao;
+    @Mock
+    private Product product;
+    @InjectMocks
+    private ProductPriceHistoryServlet servlet;
 
-    private ServletConfig servletConfig;
-
-    private ProductListPageServlet servlet = new ProductListPageServlet();
 
     @Before
-    public void setup() throws ServletException {
-        servlet.init(servletConfig);
-        when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+    public void setup() {
         when(request.getSession()).thenReturn(session);
+        when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
+        Long correctId = product.getId();
+        when(request.getPathInfo()).thenReturn("/" + correctId);
+        when(arrayListProductDao.getProduct(correctId)).thenReturn(product);
         servlet.doGet(request, response);
-        verify(request).setAttribute(eq("products"), any());
+        verify(request).getRequestDispatcher("/WEB-INF/pages/productPriceHistory.jsp");
         verify(requestDispatcher).forward(request, response);
     }
 
