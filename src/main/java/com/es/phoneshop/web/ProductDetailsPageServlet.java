@@ -33,7 +33,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        viewedProductService.addProductToViewedList(req, productDao.getProduct(parseProductId(req)));
+        viewedProductService.addProductToViewedList(req.getSession(), productDao.getProduct(parseProductId(req)));
         req.setAttribute("product", productDao.getProduct(parseProductId(req)));
         req.setAttribute("cart", cartService.getCart(req));
         req.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(req, resp);
@@ -49,13 +49,12 @@ public class ProductDetailsPageServlet extends HttpServlet {
             req.getLocale();
             NumberFormat format = NumberFormat.getInstance(req.getLocale());
             quantity = format.parse(quantityString).intValue();
+            cartService.add(cart, id, quantity);
         } catch (ParseException e) {
             req.setAttribute("error", "Not a number");
+            resp.sendRedirect(req.getContextPath() + "/products/" + id + "?error=Not a number");
             doGet(req, resp);
             return;
-        }
-        try {
-            cartService.add(cart, id, quantity);
         } catch (OutOfStockException e) {
             req.setAttribute("error", "Out of stock, max available: " + e.getStockAvailable());
             doGet(req, resp);

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -53,10 +54,32 @@ public class ProductDetailsPageServlterTest {
     @Test
     public void testDoGet() throws ServletException, IOException {
         when(request.getPathInfo()).thenReturn("/1");
-
         servlet.doGet(request, response);
-        verify(request).getRequestDispatcher(eq("/WEB-INF/pages/product.jsp"));
-        verify(request).setAttribute("product", any());
+        verify(requestDispatcher).forward(request, response);
+
+        Product product = productDao.getProduct(1L);
+        verify(request).setAttribute("product", product);
     }
 
+    @Test
+    public void testDoPostWithEnoughStock() throws IOException, ServletException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(request.getParameter("quantity")).thenReturn(1 +"");
+        when(request.getLocale()).thenReturn(Locale.ENGLISH);
+
+        servlet.doPost(request,response);
+
+        verify(response).sendRedirect(request.getContextPath() + "/products/" + 1 + "?message=Product added to your cart successfully");
+    }
+
+    @Test
+    public void testDoPostWithNotANumberQuantity() throws IOException, ServletException {
+        when(request.getPathInfo()).thenReturn("/1");
+        when(request.getParameter("quantity")).thenReturn("first");
+        when(request.getLocale()).thenReturn(Locale.ENGLISH);
+
+        servlet.doPost(request,response);
+
+        verify(response).sendRedirect(request.getContextPath() + "/products/" + "1" + "?error=Not a number");
+    }
 }

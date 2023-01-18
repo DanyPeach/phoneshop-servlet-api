@@ -4,10 +4,11 @@ import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.Product;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ViewedProductServiceImpl implements ViewedProductsService{
+public class ViewedProductServiceImpl implements ViewedProductsService {
     private static final String VIEWED_PRODUCTS_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".viewed";
 
     private ViewedProductServiceImpl() {
@@ -22,18 +23,18 @@ public class ViewedProductServiceImpl implements ViewedProductsService{
     }
 
     @Override
-    public List<Product> getViewedProducts(HttpServletRequest req) {
-        List<Product> viewedProducts = (LinkedList<Product>) req.getSession().getAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE);
+    public synchronized List<Product> getViewedProducts(HttpSession session) {
+        List<Product> viewedProducts = (List<Product>) session.getAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE);
         if (viewedProducts == null) {
             viewedProducts = new LinkedList<>();
-            req.getSession().setAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE, viewedProducts);
+            session.setAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE, viewedProducts);
         }
         return viewedProducts;
     }
 
     @Override
-    public void addProductToViewedList(HttpServletRequest req, Product product) {
-        LinkedList<Product> viewedProduts = (LinkedList<Product>) getViewedProducts(req);
+    public synchronized void addProductToViewedList(HttpSession session, Product product) {
+        LinkedList<Product> viewedProduts = (LinkedList<Product>) getViewedProducts(session);
         if (viewedProduts.contains(product)) {
             viewedProduts.remove(product);
             viewedProduts.addFirst(product);
@@ -43,6 +44,6 @@ public class ViewedProductServiceImpl implements ViewedProductsService{
             }
             viewedProduts.addFirst(product);
         }
-        req.getSession().setAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE, viewedProduts);
+        session.setAttribute(VIEWED_PRODUCTS_SESSION_ATTRIBUTE, viewedProduts);
     }
 }
