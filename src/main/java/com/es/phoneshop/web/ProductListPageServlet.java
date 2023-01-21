@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class ProductListPageServlet extends HttpServlet {
-    ProductDao productDao;
+    private ProductDao productDao;
     private ViewedProductsService viewedProductsService;
 
 
