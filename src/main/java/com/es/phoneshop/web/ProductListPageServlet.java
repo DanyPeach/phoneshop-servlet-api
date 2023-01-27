@@ -1,7 +1,6 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
 import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;

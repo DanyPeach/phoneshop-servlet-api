@@ -3,7 +3,6 @@ package com.es.phoneshop.model.cart;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
