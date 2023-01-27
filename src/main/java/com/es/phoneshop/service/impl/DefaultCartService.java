@@ -1,9 +1,12 @@
-package com.es.phoneshop.model.cart;
+package com.es.phoneshop.service.impl;
 
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDao;
+import com.es.phoneshop.model.cart.Cart;
+import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.service.CartService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -38,7 +41,7 @@ public class DefaultCartService implements CartService {
 
     @Override
     public void add(Cart cart, long productId, int quantity) throws OutOfStockException {
-        Product product = productDao.getProduct(productId);
+        Product product = productDao.get(productId);
         Optional<CartItem> optionalCartItem = getCartItemFromCart(productId, cart);
         if (!checkFullStock(cart, product, quantity)) {
             throw new OutOfStockException(product, quantity, product.getStock());
@@ -56,7 +59,7 @@ public class DefaultCartService implements CartService {
 
     @Override
     public void update(Cart cart, long productId, int quantity) throws OutOfStockException {
-        Product product = productDao.getProduct(productId);
+        Product product = productDao.get(productId);
         Optional<CartItem> optionalCartItem = getCartItemFromCart(productId, cart);
         if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();

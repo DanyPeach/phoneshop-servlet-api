@@ -60,6 +60,10 @@
         </c:forEach>
     </table>
         <button>Update</button>
+        <br>
+      </form>
+    <form action="${pageContext.servletContext.contextPath}/checkout">
+        <button>Checkout</button>
     </form>
     <form id="deleteCartItem" method="post">
 
