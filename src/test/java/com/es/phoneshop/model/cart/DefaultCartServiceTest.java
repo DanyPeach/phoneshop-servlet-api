@@ -2,7 +2,8 @@ package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

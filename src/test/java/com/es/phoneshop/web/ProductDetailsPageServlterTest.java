@@ -1,8 +1,8 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,7 +57,7 @@ public class ProductDetailsPageServlterTest {
         servlet.doGet(request, response);
         verify(requestDispatcher).forward(request, response);
 
-        Product product = productDao.getProduct(1L);
+        Product product = productDao.get(1L);
         verify(request).setAttribute("product", product);
     }
 

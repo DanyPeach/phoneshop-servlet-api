@@ -54,4 +54,9 @@ public class CartItem implements Serializable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }
