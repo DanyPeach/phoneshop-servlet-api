@@ -1,48 +1,70 @@
 package com.es.phoneshop.model.cart;
 
 import com.es.phoneshop.exception.OutOfStockException;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.PriceHistory;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Currency;
+import java.util.HashSet;
+import java.util.Set;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultCartServiceTest {
+    private static final String CART_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".cart";
+    @Mock
     private ProductDao productDao;
-    private CartService cartService;
-    private final Cart cart = new Cart();
+    @Mock
+    private HttpSession session;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private Product product;
+    @Mock
+    private Cart cart;
+    @InjectMocks
+    private CartService cartService = DefaultCartService.getInstance();
 
     @Before
     public void setup() {
-        productDao =  ArrayListProductDao.getInstance();
-        cartService = DefaultCartService.getInstance();
+        Set<CartItem> cartItems = new HashSet<>();
+        cartItems.add(new CartItem(product, 4));
+        when(cart.getCartItems()).thenReturn(cartItems);
+        when(productDao.getProduct(1L)).thenReturn(product);
+        when(product.getId()).thenReturn(1L);
+        when(product.getStock()).thenReturn(100);
+        when(product.getPrice()).thenReturn(BigDecimal.valueOf(600));
     }
 
     @Test
-    public void testFindProductsNoResults() throws OutOfStockException {
-        Product product = new Product();
-        CartItem cartItem = new CartItem(product, 1);
-        productDao.save(product);
-        cartService.add(cart, product.getId(), 1);
-        assertTrue(cart.getCartItems().contains(cartItem));
+    public void testGetCart() {
+        when(request.getSession()).thenReturn(session);
+        when(request.getSession().getAttribute(CART_SESSION_ATTRIBUTE)).thenReturn(null);
+        cartService.getCart(request);
+        verify(session).setAttribute(eq(CART_SESSION_ATTRIBUTE), any(Cart.class));
     }
 
     @Test
-    public void testAddSameProductToCart() throws OutOfStockException {
-        Currency usd = Currency.getInstance("USD");
-        Product product = new Product("simsxg75", "Siemens SXG75", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg", new ArrayList<>());
-        productDao.save(product);
-        cartService.add(cart, product.getId(), 1);
-        cartService.add(cart, product.getId(), 1);
-        assertTrue(cart.getCartItems().size()==1);
+    public void testAddProduct() throws OutOfStockException {
+        cartService.add(cart, 1L, 2);
+        assertEquals(1, cart.getCartItems().size());
+    }
+
+    @Test(expected = OutOfStockException.class)
+    public void testAddOutOfStockProduct() throws OutOfStockException {
+        cartService.add(cart, 1L, 500);
     }
 }

@@ -58,14 +58,6 @@
                 </td>
             </tr>
         </c:forEach>
-<%--        <tr>--%>
-<%--            <td>--%>
-<%--                ${cart.totalCost}--%>
-<%--            </td>--%>
-<%--            <td>--%>
-<%--                ${cart.totalQuantity}--%>
-<%--            </td>--%>
-<%--        </tr>--%>
     </table>
         <button>Update</button>
     </form>
