@@ -9,6 +9,8 @@ import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
 import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;
 import com.es.phoneshop.model.viewedProduct.ViewedProductsService;
+import com.es.phoneshop.web.utils.ExceptionHandler;
+import com.es.phoneshop.web.utils.ItemPropertyParsing;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -27,6 +29,8 @@ public class AddItemToCartServlet extends HttpServlet {
     private ProductDao productDao;
     private CartService cartService;
     private ViewedProductsService viewedProductsService;
+    private ExceptionHandler exceptionHandler;
+    private ItemPropertyParsing itemPropertyParsing;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -49,10 +53,10 @@ public class AddItemToCartServlet extends HttpServlet {
         Long parsedProductId = Long.valueOf(productId);
         int quantity;
             try{
-                quantity = getQuantity(quantitie, req);
+                quantity = itemPropertyParsing.getQuantity(quantitie, req);
                 cartService.add(cartService.getCart(req), parsedProductId, quantity);
             } catch (ParseException | OutOfStockException e){
-                handleError(errors, parsedProductId, e);
+                exceptionHandler.handleError(errors, parsedProductId, e);
             }
         if(errors.isEmpty()){
             resp.sendRedirect(req.getContextPath() + "/cart?message=Successfull added to your cart");
@@ -68,22 +72,7 @@ public class AddItemToCartServlet extends HttpServlet {
         productDao = ArrayListProductDao.getInstance();
         cartService = DefaultCartService.getInstance();
         viewedProductsService = ViewedProductServiceImpl.getInstance();
-    }
-
-    private int getQuantity(String quantity, HttpServletRequest req) throws ParseException {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(req.getLocale());
-        return numberFormat.parse(quantity).intValue();
-    }
-
-    private void handleError(Map<Long, String> errors, Long productId, Exception e){
-        if(e.getClass().equals(ParseException.class)){
-            errors.put(productId, "Not a number");
-        }else {
-            if(((OutOfStockException) e).getStockAvailable() <= 0){
-                errors.put(productId, "Can't be negative or zero");
-            } else{
-                errors.put(productId, "Out of stock" + ((OutOfStockException) e).getStockAvailable());
-            }
-        }
+        exceptionHandler = new ExceptionHandler();
+        itemPropertyParsing = new ItemPropertyParsing();
     }
 }
