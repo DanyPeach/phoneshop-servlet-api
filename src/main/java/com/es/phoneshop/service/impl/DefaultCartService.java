@@ -10,6 +10,7 @@ import com.es.phoneshop.service.CartService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -82,6 +83,13 @@ public class DefaultCartService implements CartService {
         );
         recalculateCart(cart);
         recalculateTotalCost(cart);
+    }
+
+    @Override
+    public void clear(Cart cart) {
+        cart.setCartItems(new HashSet<>());
+        cart.setTotalQuantity(0);
+        cart.setTotalCost(BigDecimal.ZERO);
     }
 
     private boolean checkFullStock(Cart cart, Product product, int quantity) {
