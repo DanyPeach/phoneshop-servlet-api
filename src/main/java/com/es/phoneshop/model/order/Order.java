@@ -1,13 +1,12 @@
 package com.es.phoneshop.model.order;
 
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.genericitem.GenericItem;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Order extends Cart {
     private Long id;
+    private String secureId;
     private BigDecimal deliveryCost;
     private BigDecimal subTotal;
 
@@ -90,5 +89,13 @@ public class Order extends Cart {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getSecureId() {
+        return secureId;
+    }
+
+    public void setSecureId(String secureId) {
+        this.secureId = secureId;
     }
 }

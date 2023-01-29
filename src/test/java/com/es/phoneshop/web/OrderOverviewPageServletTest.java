@@ -1,7 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.dao.impl.ArrayListProductDao;
-import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.dao.OrderDao;
+import com.es.phoneshop.model.order.Order;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +13,6 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -22,36 +21,31 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProductPriceHistoryServletTest {
+public class OrderOverviewPageServletTest {
     @Mock
     private HttpServletRequest request;
     @Mock
     private HttpServletResponse response;
     @Mock
-    private HttpSession session;
-    @Mock
     private RequestDispatcher requestDispatcher;
     @Mock
-    private ArrayListProductDao arrayListProductDao;
+    private OrderDao orderDao;
     @Mock
-    private Product product;
+    private Order order;
     @InjectMocks
-    private ProductPriceHistoryServlet servlet;
-
+    private OrderOverviewPageServlet servlet = new OrderOverviewPageServlet();
 
     @Before
     public void setup() {
-        when(request.getSession()).thenReturn(session);
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
+        when(request.getPathInfo()).thenReturn("111111111");
+        when(orderDao.getOrderBySecureId(anyString())).thenReturn(order);
     }
 
     @Test
     public void testDoGet() throws ServletException, IOException {
-        Long correctId = product.getId();
-        when(request.getPathInfo()).thenReturn("/" + correctId);
-        when(arrayListProductDao.get(correctId)).thenReturn(product);
         servlet.doGet(request, response);
-        verify(request).getRequestDispatcher("/WEB-INF/pages/productPriceHistory.jsp");
+        verify(request).setAttribute("order", order);
         verify(requestDispatcher).forward(request, response);
     }
 

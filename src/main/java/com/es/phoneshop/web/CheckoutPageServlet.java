@@ -53,12 +53,11 @@ public class CheckoutPageServlet extends HttpServlet {
         LocalDate deliveryDate = checkDeliveryDate(req, errors);
         PaymentMethod paymentMethod = readPaymentMethod(req, errors);
 
-
-
         if(errors.isEmpty()){
             setOrder(order, firstname, lastname, phone, deliveryDate, deliveryAddress, paymentMethod);
             orderService.placeOrder(order);
-            resp.sendRedirect(req.getContextPath() + "/overview/" + order.getId());
+            cartService.clear(cart);
+            resp.sendRedirect(req.getContextPath() + "/order/overview/" + order.getSecureId());
         } else {
             req.setAttribute("errors", errors);
             doGet(req, resp);
