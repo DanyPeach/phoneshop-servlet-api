@@ -11,6 +11,7 @@ import com.es.phoneshop.service.OrderService;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -25,15 +26,10 @@ public class DefaultOrderService implements OrderService {
         return DefaultOrderService.SingeltonHelper.INSTANCE;
     }
 
-
     @Override
     public Order getOrder(Cart cart) {
         Order order = new Order();
-        order.setCartItems(cart.getCartItems().stream().map(cartItem -> new CartItem(cartItem.getProduct(), cartItem.getQuantity())).collect(Collectors.toSet()));
-        order.setSubTotal(cart.getTotalCost());
-        order.setDeliveryCost(calculateDeliveryCost());
-        order.setTotalCost(order.getDeliveryCost().add(order.getSubTotal()));
-        return order;
+        return createOrder(order, cart);
     }
 
     @Override
@@ -47,7 +43,19 @@ public class DefaultOrderService implements OrderService {
         orderDao.save(order);
     }
 
-    private BigDecimal calculateDeliveryCost(){
+    private Order createOrder(Order order, Cart cart) {
+        order.setCartItems(copyCartItems(cart));
+        order.setSubTotal(cart.getTotalCost());
+        order.setDeliveryCost(calculateDeliveryCost());
+        order.setTotalCost(order.getDeliveryCost().add(order.getSubTotal()));
+        return order;
+    }
+
+    private Set<CartItem> copyCartItems(Cart cart) {
+        return cart.getCartItems().stream().map(cartItem -> new CartItem(cartItem.getProduct(), cartItem.getQuantity())).collect(Collectors.toSet());
+    }
+
+    private BigDecimal calculateDeliveryCost() {
         return new BigDecimal(5);
     }
 }

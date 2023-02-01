@@ -60,20 +60,26 @@ public class DefaultCartService implements CartService {
 
     @Override
     public void update(Cart cart, long productId, int quantity) throws OutOfStockException {
-        Product product = productDao.get(productId);
-        Optional<CartItem> optionalCartItem = getCartItemFromCart(productId, cart);
-        if (optionalCartItem.isPresent()) {
-            CartItem cartItem = optionalCartItem.get();
-            if (!checkFullStock(cart, product, quantity)) {
-                throw new OutOfStockException(product, quantity, product.getStock());
-            } else {
-                cartItem.setQuantity(quantity);
-            }
+        if(quantity < 0){
+            throw new IllegalArgumentException();
+        } else if(quantity == 0){
+            delete(cart, productId);
         } else {
-            cart.getCartItems().add(new CartItem(product, quantity));
+            Product product = productDao.get(productId);
+            Optional<CartItem> optionalCartItem = getCartItemFromCart(productId, cart);
+            if (optionalCartItem.isPresent()) {
+                CartItem cartItem = optionalCartItem.get();
+                if (!checkFullStock(cart, product, quantity)) {
+                    throw new OutOfStockException(product, quantity, product.getStock());
+                } else {
+                    cartItem.setQuantity(quantity);
+                }
+            } else {
+                cart.getCartItems().add(new CartItem(product, quantity));
+            }
+            recalculateCart(cart);
+            recalculateTotalCost(cart);
         }
-        recalculateCart(cart);
-        recalculateTotalCost(cart);
     }
 
     @Override
@@ -123,4 +129,5 @@ public class DefaultCartService implements CartService {
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO));
     }
+
 }

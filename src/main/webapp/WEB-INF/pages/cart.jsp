@@ -59,12 +59,16 @@
             </tr>
         </c:forEach>
     </table>
+        <c:if test="${cart.cartItems.size()!=0}">
         <button>Update</button>
         <br>
+        </c:if>
       </form>
+    <c:if test="${cart.cartItems.size()!=0}">
     <form action="${pageContext.servletContext.contextPath}/checkout">
         <button>Checkout</button>
     </form>
+    </c:if>
     <form id="deleteCartItem" method="post">
 
     </form>

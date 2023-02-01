@@ -7,8 +7,8 @@ import com.es.phoneshop.service.impl.DefaultCartService;
 import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.model.product.SortField;
 import com.es.phoneshop.model.product.SortOrder;
-import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;
-import com.es.phoneshop.model.viewedProduct.ViewedProductsService;
+import com.es.phoneshop.model.viewedproduct.ViewedProductServiceImpl;
+import com.es.phoneshop.model.viewedproduct.ViewedProductsService;
 import com.es.phoneshop.web.utils.ExceptionHandler;
 import com.es.phoneshop.web.utils.ItemPropertyParsing;
 
