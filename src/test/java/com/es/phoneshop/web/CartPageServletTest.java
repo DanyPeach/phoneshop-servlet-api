@@ -1,9 +1,7 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.model.cart.CartService;
+import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.web.utils.ExceptionHandler;
 import com.es.phoneshop.web.utils.ItemPropertyParsing;
 import org.junit.Before;

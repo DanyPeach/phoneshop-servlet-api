@@ -1,5 +1,7 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.model.genericitem.GenericItem;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Cart implements Serializable {
+public class Cart extends GenericItem implements Serializable {
     private Set<CartItem> cartItems;
 
     private BigDecimal totalCost;

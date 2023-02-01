@@ -1,11 +1,11 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
+import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import com.es.phoneshop.web.utils.ExceptionHandler;
 import com.es.phoneshop.web.utils.ItemPropertyParsing;
 
@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +45,7 @@ public class CartPageServlet extends HttpServlet {
             try{
                 quantity = itemPropertyParsing.getQuantity(quantities[i], req);
                 cartService.update(cartService.getCart(req), productId, quantity);
-            } catch (ParseException | OutOfStockException e){
+            } catch (ParseException | IllegalArgumentException | OutOfStockException e){
                 exceptionHandler.handleError(errors, productId, e);
             }
         }

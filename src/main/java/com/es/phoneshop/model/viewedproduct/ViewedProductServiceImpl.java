@@ -1,9 +1,8 @@
-package com.es.phoneshop.model.viewedProduct;
+package com.es.phoneshop.model.viewedproduct;
 
-import com.es.phoneshop.model.cart.DefaultCartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
 import com.es.phoneshop.model.product.Product;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
 import java.util.List;

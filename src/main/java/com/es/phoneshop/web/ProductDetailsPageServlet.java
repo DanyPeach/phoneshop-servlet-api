@@ -1,13 +1,13 @@
 package com.es.phoneshop.web;
 
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;
-import com.es.phoneshop.model.viewedProduct.ViewedProductsService;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
+import com.es.phoneshop.dao.impl.ArrayListProductDao;
+import com.es.phoneshop.model.viewedproduct.ViewedProductServiceImpl;
+import com.es.phoneshop.model.viewedproduct.ViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -33,8 +33,8 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        viewedProductService.addProductToViewedList(req.getSession(), productDao.getProduct(parseProductId(req)));
-        req.setAttribute("product", productDao.getProduct(parseProductId(req)));
+        viewedProductService.addProductToViewedList(req.getSession(), productDao.get(parseProductId(req)));
+        req.setAttribute("product", productDao.get(parseProductId(req)));
         req.setAttribute("cart", cartService.getCart(req));
         req.getRequestDispatcher("/WEB-INF/pages/product.jsp").forward(req, resp);
     }

@@ -1,6 +1,7 @@
 package com.es.phoneshop.model.product;
 
-import org.junit.Assert;
+import com.es.phoneshop.dao.ProductDao;
+import com.es.phoneshop.dao.impl.ArrayListProductDao;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +36,7 @@ public class ArrayListProductDaoTest
         productDao.save(testProduct);
         assertTrue(testProduct.getId()>=0);
 
-        Product res = productDao.getProduct(testProduct.getId());
+        Product res = productDao.get(testProduct.getId());
         assertNotNull(res);
     }
 

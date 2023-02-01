@@ -1,8 +1,10 @@
 package com.es.phoneshop.model.cart;
 
+import com.es.phoneshop.dao.ProductDao;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +45,7 @@ public class DefaultCartServiceTest {
         Set<CartItem> cartItems = new HashSet<>();
         cartItems.add(new CartItem(product, 4));
         when(cart.getCartItems()).thenReturn(cartItems);
-        when(productDao.getProduct(1L)).thenReturn(product);
+        when(productDao.get(1L)).thenReturn(product);
         when(product.getId()).thenReturn(1L);
         when(product.getStock()).thenReturn(100);
         when(product.getPrice()).thenReturn(BigDecimal.valueOf(600));
