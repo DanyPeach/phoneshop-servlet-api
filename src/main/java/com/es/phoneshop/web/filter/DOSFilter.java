@@ -30,6 +30,6 @@ public class DOSFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        dosService.cancel();
     }
 }

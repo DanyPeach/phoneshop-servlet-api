@@ -45,7 +45,7 @@ public class CartPageServlet extends HttpServlet {
             try{
                 quantity = itemPropertyParsing.getQuantity(quantities[i], req);
                 cartService.update(cartService.getCart(req), productId, quantity);
-            } catch (ParseException | OutOfStockException e){
+            } catch (ParseException | IllegalArgumentException | OutOfStockException e){
                 exceptionHandler.handleError(errors, productId, e);
             }
         }
