@@ -5,8 +5,8 @@ import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.viewedProduct.ViewedProductServiceImpl;
-import com.es.phoneshop.model.viewedProduct.ViewedProductsService;
+import com.es.phoneshop.model.viewedproduct.ViewedProductServiceImpl;
+import com.es.phoneshop.model.viewedproduct.ViewedProductsService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
