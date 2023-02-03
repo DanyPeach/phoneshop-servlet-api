@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ViewedProductServiceImpl implements ViewedProductsService {
+public class ViewedProductServiceImpl implements com.es.phoneshop.model.viewedproduct.ViewedProductsService {
     private static final String VIEWED_PRODUCTS_SESSION_ATTRIBUTE = DefaultCartService.class.getName() + ".viewed";
 
     private ViewedProductServiceImpl() {
