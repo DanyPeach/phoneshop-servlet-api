@@ -14,6 +14,10 @@
   <form>
     <input name="query" value="${param.query}">
     <button>Search</button>
+
+    <a href="${pageContext.servletContext.contextPath}/advancedSearch">
+      Advanced search
+    </a>
   </form>
   <table>
     <thead>

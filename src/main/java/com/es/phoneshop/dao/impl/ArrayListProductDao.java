@@ -5,12 +5,16 @@ import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.*;
 import com.es.phoneshop.model.product.util.ProductComparator;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ArrayListProductDao extends ArrayListGenericDao<Product> implements ProductDao {
 
@@ -36,6 +40,35 @@ public class ArrayListProductDao extends ArrayListGenericDao<Product> implements
         } finally {
             lock.unlock();
         }
+    }
+
+    @Override
+    public List<Product> advancedSearch(String query, String searchOption,BigDecimal minPrice, BigDecimal maxPrice) {
+        Lock readLock = readWriteLock.readLock();
+        readLock.lock();
+        try {
+            if (query == null
+                    && searchOption == null
+                    && minPrice == null
+                    && maxPrice == null) {
+                return new ArrayList<>();
+            }
+            if (SearchOption.valueOf(searchOption) == SearchOption.ANY_WORDS) {
+                Stream<Product> productStream = filterIfValueNotNull(items.stream(), minPrice, item -> minPrice.compareTo(item.getPrice()) < 0);
+                productStream = filterIfValueNotNull(productStream, minPrice, item -> maxPrice.compareTo(item.getPrice()) >0);
+                return productStream.collect(Collectors.toList());
+            } else {
+                return findProducts(query, SortField.description, SortOrder.asc);
+            }
+        } finally {
+            readLock.unlock();
+        }
+    }
+
+    private Stream<Product> filterIfValueNotNull(Stream<Product> productStream, BigDecimal value, Predicate<? super Product> predicate) {
+        if(value != null) {
+            return productStream.filter(predicate);
+        } else return productStream;
     }
 
     private boolean isProductMatchingQuery(Product product, String query) {
